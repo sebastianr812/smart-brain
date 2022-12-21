@@ -1,4 +1,6 @@
 import React from 'react';
+import './Register.css'
+
 
 class Register extends React.Component {
   constructor(props) {
@@ -6,39 +8,58 @@ class Register extends React.Component {
     this.state = {
       email: '',
       password: '',
-      name: ''
+      name: '',
+      age: '',
+      pet: ''
     }
   }
 
   onNameChange = (event) => {
-    this.setState({name: event.target.value})
+    this.setState({ name: event.target.value })
   }
 
   onEmailChange = (event) => {
-    this.setState({email: event.target.value})
+    this.setState({ email: event.target.value })
   }
 
   onPasswordChange = (event) => {
-    this.setState({password: event.target.value})
+    this.setState({ password: event.target.value })
+  }
+
+  onPetChange = (event) => {
+    this.setState({ pet: event.target.value })
+  }
+
+  onAgeChange = (event) => {
+    this.setState({ age: event.target.value })
   }
 
   onSubmitSignIn = () => {
     fetch('http://localhost:3000/register', {
       method: 'post',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: this.state.email,
         password: this.state.password,
-        name: this.state.name
+        name: this.state.name,
+        age: this.state.age,
+        pet: this.state.pet
       })
     })
       .then(response => response.json())
-      .then(user => {
-        if (user.id) {
-          this.props.loadUser(user)
-          this.props.onRouteChange('home');
+      .then(data => {
+        if (data.userId) {
+          window.sessionStorage.setItem('token', data.token)
+          fetch(`http://localhost:3000/profile/${data.userId}`)
+            .then(resp => resp.json())
+            .then(user => {
+              this.props.loadUser(user)
+              this.props.onRouteChange('home')
+            })
         }
       })
+
+
   }
 
   render() {
@@ -51,7 +72,7 @@ class Register extends React.Component {
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
                 <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
                   type="text"
                   name="name"
                   id="name"
@@ -61,7 +82,7 @@ class Register extends React.Component {
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
                 <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
                   type="email"
                   name="email-address"
                   id="email-address"
@@ -71,13 +92,34 @@ class Register extends React.Component {
               <div className="mv3">
                 <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
                 <input
-                  className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
+                  className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
                   type="password"
                   name="password"
                   id="password"
                   onChange={this.onPasswordChange}
                 />
               </div>
+              <div className="mt3">
+                <label className="db fw6 lh-copy f6" htmlFor="pet">Pet</label>
+                <input
+                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
+                  type="pet"
+                  name="pet"
+                  id="pet"
+                  onChange={this.onPetChange}
+                />
+              </div>
+              <div className="mt3">
+                <label className="db fw6 lh-copy f6" htmlFor="age">Age</label>
+                <input
+                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 hover-black"
+                  type="age"
+                  name="age"
+                  id="age"
+                  onChange={this.onAgeChange}
+                />
+              </div>
+
             </fieldset>
             <div className="">
               <input
